@@ -1,3 +1,13 @@
 #game {
   /* background-color: #444; */
 }
+
+.cell {
+  border: 1px solid black;
+  width: 20px;
+  height: 20px;
+  background-color: #ddd;
+  display: inline-block;
+
+  margin: 0;
+}
