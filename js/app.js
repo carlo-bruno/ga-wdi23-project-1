@@ -18,6 +18,8 @@ for (let r = 0; r < ROW; r++) {
 //test
 // board[19][0] = 1;
 // board[19][1] = 1;
+// board[19][3] = 1;
+// board[19][4] = 1;
 
 // draw indivitual cell
 function drawCell(x, y, value) {
@@ -48,7 +50,7 @@ let piece2 = [
 ];
 
 let activePiece = {
-  position: { x: 0, y: 15 },
+  position: { x: 5, y: 0 },
   matrix: piece
 };
 
@@ -89,7 +91,7 @@ function collideBottom() {
   activePiece.matrix[activePiece.matrix.length - 1].forEach(
     (cell, c) => {
       if (cell !== 0) {
-        newX = c; // col to check
+        newX = c + activePiece.position.x; // col to check rel to the board
       }
     }
   );
@@ -121,9 +123,9 @@ function lockPiece() {
 
 function resetPiece() {
   activePiece = {
-    position: { x: 0, y: 0 },
+    position: { x: 5, y: 0 },
     matrix: piece
   };
 }
 
-setInterval(gameLoop, 1000);
+// setInterval(gameLoop, 1000);
