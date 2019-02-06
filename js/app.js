@@ -58,14 +58,31 @@ let activePiece = {
 drawMatrix(board, { x: 0, y: 0 });
 drawMatrix(activePiece.matrix, activePiece.position);
 
+function movePiece(e) {
+  // console.log(e.keyCode);
+  // if left && position.x < 0, x--
+  // else if right && pos.x > 9,x++
+  switch (true) {
+    case e.keyCode === 37 && activePiece.position.x > 0:
+      activePiece.position.x--;
+      break;
+    case e.keyCode === 39 &&
+      activePiece.position.x + activePiece.matrix.length < 10:
+      activePiece.position.x++;
+      break;
+  }
+}
+
 function dropPiece() {
   activePiece.position.y += 1;
 }
 
 function gameLoop() {
   dropPiece();
-  drawMatrix(board, { x: 0, y: 0 });
-  drawMatrix(activePiece.matrix, activePiece.position);
+  setInterval(() => {
+    drawMatrix(board, { x: 0, y: 0 });
+    drawMatrix(activePiece.matrix, activePiece.position);
+  }, 60);
 
   if (activePiece.position.y + activePiece.matrix.length === ROW) {
     console.log("lock");
@@ -74,9 +91,9 @@ function gameLoop() {
   }
   collideBottom();
 }
+
 // if activePiece matrix-bottom + 1 !==0
 // lock on top of that piece
-
 function collideBottom() {
   let newX;
   let newY = activePiece.position.y + activePiece.matrix.length; // looking one row below;
@@ -128,4 +145,5 @@ function resetPiece() {
   };
 }
 
-// setInterval(gameLoop, 1000);
+document.addEventListener("keydown", movePiece);
+setInterval(gameLoop, 1000);
