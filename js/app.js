@@ -55,7 +55,7 @@ let piece2 = [
 
 let activePiece = {
   position: { x: 7, y: 10 },
-  matrix: piece2
+  matrix: piece
 };
 
 // remove on deploy
@@ -107,7 +107,7 @@ function gameLoop() {
 }
 
 //! collision detection
-//? returns boolean value?
+//* returns boolean value
 //* checks every cell of active piece
 //* if cell !== 0, continue
 //*   if next cell === walls, true
@@ -158,15 +158,30 @@ function lockPiece() {
       }
     });
   });
+  clearFullRow();
   resetPiece();
+}
+
+function clearFullRow() {
+  let rowsToDelete = [];
+  for (let r = 19; r > 0; r--) {
+    // console.table(board[r]);
+    if (!board[r].includes(0)) {
+      console.log("full!!");
+      console.log("row #", r);
+      board.splice(r, 1);
+      board.unshift(new Array(10).fill(0));
+      r++; // after delete, repeat check of row;
+    }
+  }
 }
 
 function resetPiece() {
   activePiece = {
     position: { x: 5, y: 0 },
-    matrix: piece2
+    matrix: piece
   };
 }
 
 document.addEventListener("keydown", movePiece);
-// setInterval(gameLoop, 1000);
+setInterval(gameLoop, 1000);
