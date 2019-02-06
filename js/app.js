@@ -36,12 +36,16 @@ function drawCell(x, y, value) {
 function drawMatrix(matrix, position) {
   matrix.forEach((row, y) => {
     row.forEach((value, x) => {
-      drawCell(x + position.x, y + position.y, value);
+      if (matrix === board) {
+        drawCell(x + position.x, y + position.y, value);
+      } else if (value !== 0) {
+        drawCell(x + position.x, y + position.y, value);
+      }
     });
   });
 }
 
-let piece = [[1, 0], [1, 1]]; // o - shape
+let piece = [[1, 1], [1, 1]]; // o - shape
 let piece2 = [
   [0, 1, 0, 0],
   [0, 1, 0, 0],
@@ -51,7 +55,7 @@ let piece2 = [
 
 let activePiece = {
   position: { x: 7, y: 10 },
-  matrix: piece
+  matrix: piece2
 };
 
 // remove on deploy
@@ -66,8 +70,7 @@ function movePiece(e) {
     case e.keyCode === 37:
       moveLeft();
       break;
-    case e.keyCode === 39 &&
-      activePiece.position.x + activePiece.matrix.length < 10:
+    case e.keyCode === 39:
       moveRight();
       break;
     case e.keyCode === 40:
@@ -116,7 +119,7 @@ function gameLoop() {
 function collideCheck(x = 0, y = 1) {
   let m = activePiece.matrix;
   let p = activePiece.position;
-  // x = side to check, -1 left +1 right, 0 not checking sides
+  // x = side to check, -1 left +1 right, 0 (default) not checking
   // y = bottom +1 (default), 0 if checking sides only
   for (let r = 0; r < m.length; r++) {
     for (let c = 0; c < m[r].length; c++) {
@@ -161,9 +164,9 @@ function lockPiece() {
 function resetPiece() {
   activePiece = {
     position: { x: 5, y: 0 },
-    matrix: piece
+    matrix: piece2
   };
 }
 
 document.addEventListener("keydown", movePiece);
-setInterval(gameLoop, 1000);
+// setInterval(gameLoop, 1000);
