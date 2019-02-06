@@ -64,21 +64,33 @@ function movePiece(e) {
   // else if right && pos.x > 9,x++
   switch (true) {
     case e.keyCode === 37 && activePiece.position.x > 0:
-      activePiece.position.x--;
+      moveLeft();
       break;
     case e.keyCode === 39 &&
       activePiece.position.x + activePiece.matrix.length < 10:
-      activePiece.position.x++;
+      moveRight();
+      break;
+    case e.keyCode === 40 &&
+      activePiece.position.y + activePiece.matrix.length < 19:
+      moveDown();
       break;
   }
 }
 
-function dropPiece() {
+function moveLeft() {
+  activePiece.position.x -= 1;
+}
+
+function moveRight() {
+  activePiece.position.x += 1;
+}
+
+function moveDown() {
   activePiece.position.y += 1;
 }
 
 function gameLoop() {
-  dropPiece();
+  moveDown();
   setInterval(() => {
     drawMatrix(board, { x: 0, y: 0 });
     drawMatrix(activePiece.matrix, activePiece.position);
@@ -146,4 +158,4 @@ function resetPiece() {
 }
 
 document.addEventListener("keydown", movePiece);
-setInterval(gameLoop, 1000);
+// setInterval(gameLoop, 1000);
