@@ -41,7 +41,7 @@ function drawMatrix(matrix, position) {
   });
 }
 
-let piece = [[1, 1], [1, 1]]; // o - shape
+let piece = [[1, 0], [1, 1]]; // o - shape
 let piece2 = [
   [0, 1, 0, 0],
   [0, 1, 0, 0],
@@ -50,7 +50,7 @@ let piece2 = [
 ];
 
 let activePiece = {
-  position: { x: 5, y: 0 },
+  position: { x: 7, y: 10 },
   matrix: piece
 };
 
@@ -63,30 +63,36 @@ function movePiece(e) {
   // if left && position.x < 0, x--
   // else if right && pos.x > 9,x++
   switch (true) {
-    case e.keyCode === 37 && activePiece.position.x > 0:
+    case e.keyCode === 37:
       moveLeft();
       break;
     case e.keyCode === 39 &&
       activePiece.position.x + activePiece.matrix.length < 10:
       moveRight();
       break;
-    case e.keyCode === 40 &&
-      activePiece.position.y + activePiece.matrix.length < 19:
+    case e.keyCode === 40:
       moveDown();
       break;
   }
 }
 
 function moveLeft() {
-  activePiece.position.x -= 1;
+  if (!collideCheck(-1, 0)) {
+    activePiece.position.x -= 1;
+  }
 }
 
 function moveRight() {
-  activePiece.position.x += 1;
+  if (!collideCheck(1, 0)) {
+    activePiece.position.x += 1;
+  }
 }
 
 function moveDown() {
   activePiece.position.y += 1;
+  if (collideCheck()) {
+    lockPiece();
+  }
 }
 
 function gameLoop() {
@@ -95,41 +101,42 @@ function gameLoop() {
     drawMatrix(board, { x: 0, y: 0 });
     drawMatrix(activePiece.matrix, activePiece.position);
   }, 60);
-
-  if (activePiece.position.y + activePiece.matrix.length === ROW) {
-    console.log("lock");
-    lockPiece();
-    resetPiece();
-  }
-  collideBottom();
 }
 
-// if activePiece matrix-bottom + 1 !==0
-// lock on top of that piece
-function collideBottom() {
-  let newX;
-  let newY = activePiece.position.y + activePiece.matrix.length; // looking one row below;
+//! collision detection
+//? returns boolean value?
+//* checks every cell of active piece
+//* if cell !== 0, continue
+//*   if next cell === walls, true
+//*   if next cell === floor, true
+//*   if next left cell !==0, true
+//*   if next right cell !==, true
+//* false
 
-  // console.log(
-  //   "row number: ",
-  //   activePiece.position.y + activePiece.matrix.length
-  // );
-  // console.log(
-  //   board[activePiece.position.y + activePiece.matrix.length]
-  // ); // new y
-  activePiece.matrix[activePiece.matrix.length - 1].forEach(
-    (cell, c) => {
-      if (cell !== 0) {
-        newX = c + activePiece.position.x; // col to check rel to the board
+function collideCheck(x = 0, y = 1) {
+  let m = activePiece.matrix;
+  let p = activePiece.position;
+  // x = side to check, -1 left +1 right, 0 not checking sides
+  // y = bottom +1 (default), 0 if checking sides only
+  for (let r = 0; r < m.length; r++) {
+    for (let c = 0; c < m[r].length; c++) {
+      if (m[r][c] !== 0) {
+        let newY = r + p.y + y; // y ( board row) to check
+        let newX = c + p.x + x; // x (board col) to check
+
+        if (newX < 0 || newX > 9 || newY > 19) {
+          console.log("collision found");
+          return true;
+        }
+
+        if (board[newY][newX] !== 0) {
+          console.log("collision found");
+          return true;
+        }
       }
     }
-  );
-
-  if (board[newY][newX] !== 0) {
-    console.log("stack");
-    lockPiece();
-    resetPiece();
   }
+  return false;
 }
 
 // change the board[cell] value to matrix of active cell
@@ -148,6 +155,7 @@ function lockPiece() {
       }
     });
   });
+  resetPiece();
 }
 
 function resetPiece() {
@@ -158,4 +166,4 @@ function resetPiece() {
 }
 
 document.addEventListener("keydown", movePiece);
-// setInterval(gameLoop, 1000);
+setInterval(gameLoop, 1000);
