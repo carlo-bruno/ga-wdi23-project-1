@@ -3,11 +3,13 @@ console.log("app.js connected");
 const game = document.querySelector("#game");
 const ctx = game.getContext("2d");
 
-const colors = ["#bbb", "red"];
+const colors = ["#bbb", "red", "#444"];
 
 const ROW = 20;
 const COL = 10;
 const SIZE = 20;
+
+let gameOver = false;
 
 // create board
 let board = [];
@@ -36,10 +38,21 @@ function drawCell(x, y, value) {
 function drawMatrix(matrix, position) {
   matrix.forEach((row, y) => {
     row.forEach((value, x) => {
-      if (matrix === board) {
+      if (matrix === board && !gameOver) {
         drawCell(x + position.x, y + position.y, value);
-      } else if (value !== 0) {
+      } else if (value !== 0 && !gameOver) {
         drawCell(x + position.x, y + position.y, value);
+      }
+    });
+  });
+}
+
+function boardOver(board, position = { x: 0, y: 0 }) {
+  board.forEach((row, y) => {
+    row.forEach((value, x) => {
+      if (value !== 0) {
+        drawCell(x + position.x, y + position.y, 2);
+        console.log("found cell");
       }
     });
   });
@@ -56,7 +69,7 @@ let piece2 = [
 
 let activePiece = {
   position: { x: 4, y: 7 },
-  matrix: piece2
+  matrix: piece
 };
 
 // remove on deploy
@@ -146,6 +159,10 @@ function gameLoop() {
     drawMatrix(board, { x: 0, y: 0 });
     drawMatrix(activePiece.matrix, activePiece.position);
   }, 60);
+  if (gameOver) {
+    clearInterval(theGame);
+    boardOver(board);
+  }
 }
 
 //! collision detection
@@ -185,6 +202,20 @@ function collideCheck() {
   return false;
 }
 
+//! GAME OVER
+// if piece locks && pos.y < 1
+// if !isOver resetPiece
+function endGame() {
+  let p = activePiece.position;
+
+  if (p.y > 1) {
+    resetPiece();
+  } else {
+    console.log("game over");
+    gameOver = true;
+  }
+}
+
 // change the board[cell] value to matrix of active cell
 function lockPiece() {
   activePiece.matrix.forEach((row, r) => {
@@ -202,7 +233,8 @@ function lockPiece() {
     });
   });
   clearFullRow();
-  resetPiece();
+  endGame();
+  //  resetPiece();
 }
 
 function clearFullRow() {
@@ -222,9 +254,9 @@ function clearFullRow() {
 function resetPiece() {
   activePiece = {
     position: { x: 5, y: 0 },
-    matrix: piece1
+    matrix: piece
   };
 }
 
 document.addEventListener("keydown", movePiece);
-setInterval(gameLoop, 1000);
+let theGame = setInterval(gameLoop, 1000);
