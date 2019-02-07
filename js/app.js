@@ -127,8 +127,7 @@ function rotatePiece() {
 
 // row of new matrix <- col of old matrix
 function rotateMatrix() {
-  let m = activePiece.matrix;
-
+  let m = activePiece.matrix.reverse();
   let newMatrix = [];
   for (let i = 0; i < m.length; i++) {
     newMatrix.push([]);
@@ -137,13 +136,8 @@ function rotateMatrix() {
     }
   }
 
-  // console.log("old");
-  // console.table(m);
-  // console.log("new");
-  // console.table(newMatrix);
-  // console.log("new rev");
-  // console.table(newMatrix.reverse());
-  return newMatrix.reverse();
+  // matrix rotation: https://medium.com/front-end-weekly/matrix-rotation-%EF%B8%8F-6550397f16ab
+  return newMatrix;
 }
 
 function gameLoop() {
