@@ -56,7 +56,7 @@ let piece2 = [
 
 let activePiece = {
   position: { x: 4, y: 7 },
-  matrix: piece1
+  matrix: piece2
 };
 
 // remove on deploy
@@ -78,27 +78,50 @@ function movePiece(e) {
       moveDown();
       break;
     case e.keyCode === 38:
-      rotateMatrix();
+      rotatePiece();
       break;
   }
 }
 
 function moveLeft() {
-  if (!collideCheck(-1, 0)) {
-    activePiece.position.x -= 1;
+  activePiece.position.x -= 1;
+  if (collideCheck()) {
+    activePiece.position.x += 1;
   }
 }
 
 function moveRight() {
-  if (!collideCheck(1, 0)) {
-    activePiece.position.x += 1;
+  activePiece.position.x += 1;
+  if (collideCheck()) {
+    activePiece.position.x -= 1;
   }
 }
 
 function moveDown() {
   activePiece.position.y += 1;
   if (collideCheck()) {
+    activePiece.position.y--;
     lockPiece();
+  }
+}
+
+function rotatePiece() {
+  let m = activePiece.matrix;
+  let pX = activePiece.position.x;
+
+  let kick = 1;
+  activePiece.matrix = rotateMatrix();
+  while (collideCheck()) {
+    activePiece.position.x += kick;
+    kick = -(kick % 2 == 0 ? kick - 1 : kick + 1);
+    console.log(kick);
+    if (Math.abs(kick) > m[0].length + 1) {
+      console.log("cant rotate");
+      activePiece.matrix = m;
+      kick = 0;
+      activePiece.position.x = pX;
+      return;
+    }
   }
 }
 
@@ -120,7 +143,7 @@ function rotateMatrix() {
   // console.table(newMatrix);
   // console.log("new rev");
   // console.table(newMatrix.reverse());
-  activePiece.matrix = newMatrix.reverse();
+  return newMatrix.reverse();
 }
 
 function gameLoop() {
@@ -141,19 +164,20 @@ function gameLoop() {
 //*   if next right cell !==, true
 //* false
 
-function collideCheck(x = 0, y = 1) {
+function collideCheck() {
   let m = activePiece.matrix;
   let p = activePiece.position;
-  // x = side to check, -1 left +1 right, 0 (default) not checking
-  // y = bottom +1 (default), 0 if checking sides only
+  // collide now checks actual cell
+  // if collision happens, revert move
+  // this will also allow piece to slide on the floor before locking
   for (let r = 0; r < m.length; r++) {
     for (let c = 0; c < m[r].length; c++) {
       if (m[r][c] !== 0) {
-        let newY = r + p.y + y; // y ( board row) to check
-        let newX = c + p.x + x; // x (board col) to check
+        let newY = r + p.y; // y ( board row) to check
+        let newX = c + p.x; // x (board col) to check
 
         if (newX < 0 || newX > 9 || newY > 19) {
-          console.log("collision found");
+          console.log("wall found");
           return true;
         }
 
@@ -209,4 +233,4 @@ function resetPiece() {
 }
 
 document.addEventListener("keydown", movePiece);
-// setInterval(gameLoop, 1000);
+setInterval(gameLoop, 1000);
