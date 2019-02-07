@@ -46,6 +46,7 @@ function drawMatrix(matrix, position) {
 }
 
 let piece = [[1, 1], [1, 1]]; // o - shape
+let piece1 = [[0, 0, 0], [1, 1, 1], [0, 1, 0]];
 let piece2 = [
   [0, 1, 0, 0],
   [0, 1, 0, 0],
@@ -54,8 +55,8 @@ let piece2 = [
 ];
 
 let activePiece = {
-  position: { x: 7, y: 10 },
-  matrix: piece
+  position: { x: 4, y: 7 },
+  matrix: piece1
 };
 
 // remove on deploy
@@ -75,6 +76,9 @@ function movePiece(e) {
       break;
     case e.keyCode === 40:
       moveDown();
+      break;
+    case e.keyCode === 38:
+      rotateMatrix();
       break;
   }
 }
@@ -96,6 +100,27 @@ function moveDown() {
   if (collideCheck()) {
     lockPiece();
   }
+}
+
+// row of new matrix <- col of old matrix
+function rotateMatrix() {
+  let m = activePiece.matrix;
+
+  let newMatrix = [];
+  for (let i = 0; i < m.length; i++) {
+    newMatrix.push([]);
+    for (let j = 0; j < m.length; j++) {
+      newMatrix[i].push(m[j][i]);
+    }
+  }
+
+  // console.log("old");
+  // console.table(m);
+  // console.log("new");
+  // console.table(newMatrix);
+  // console.log("new rev");
+  // console.table(newMatrix.reverse());
+  activePiece.matrix = newMatrix.reverse();
 }
 
 function gameLoop() {
@@ -179,9 +204,9 @@ function clearFullRow() {
 function resetPiece() {
   activePiece = {
     position: { x: 5, y: 0 },
-    matrix: piece
+    matrix: piece1
   };
 }
 
 document.addEventListener("keydown", movePiece);
-setInterval(gameLoop, 1000);
+// setInterval(gameLoop, 1000);
