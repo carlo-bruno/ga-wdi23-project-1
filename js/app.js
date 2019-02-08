@@ -3,7 +3,17 @@ console.log("app.js connected");
 const game = document.querySelector("#game");
 const ctx = game.getContext("2d");
 
-const colors = ["#bbb", "red", "#444"];
+const colors = [
+  "#bbb",
+  "cyan",
+  "yellow",
+  "purple",
+  "green",
+  "red",
+  "blue",
+  "orange",
+  "#444"
+];
 
 const ROW = 20;
 const COL = 10;
@@ -16,12 +26,6 @@ let board = [];
 for (let r = 0; r < ROW; r++) {
   board.push(new Array(COL).fill(0));
 }
-
-//test
-// board[19][0] = 1;
-// board[19][1] = 1;
-// board[19][3] = 1;
-// board[19][4] = 1;
 
 // draw indivitual cell
 function drawCell(x, y, value) {
@@ -42,34 +46,67 @@ function drawMatrix(matrix, position) {
         drawCell(x + position.x, y + position.y, value);
       } else if (value !== 0 && !gameOver) {
         drawCell(x + position.x, y + position.y, value);
+      } else if (gameOver && value !== 0) {
+        drawCell(x + position.x, y + position.y, colors.length - 1);
       }
     });
   });
 }
 
-function boardOver(board, position = { x: 0, y: 0 }) {
-  board.forEach((row, y) => {
-    row.forEach((value, x) => {
-      if (value !== 0) {
-        drawCell(x + position.x, y + position.y, 2);
-        console.log("found cell");
-      }
-    });
-  });
-}
-
-let piece = [[1, 1], [1, 1]]; // o - shape
-let piece1 = [[0, 0, 0], [1, 1, 1], [0, 1, 0]];
-let piece2 = [
-  [0, 1, 0, 0],
-  [0, 1, 0, 0],
-  [0, 1, 0, 0],
-  [0, 1, 0, 0]
+const tetro = [
+  [
+    // I piece
+    [0, 1, 0, 0],
+    [0, 1, 0, 0],
+    [0, 1, 0, 0],
+    [0, 1, 0, 0]
+  ],
+  [
+    // O piece
+    [2, 2],
+    [2, 2]
+  ],
+  [
+    // T piece
+    [0, 0, 0],
+    [3, 3, 3],
+    [0, 3, 0]
+  ],
+  [
+    // S piece
+    [0, 4, 4],
+    [4, 4, 0],
+    [0, 0, 0]
+  ],
+  [
+    // Z piece
+    [5, 5, 0],
+    [0, 5, 5],
+    [0, 0, 0]
+  ],
+  [
+    // J piece
+    [0, 6, 0],
+    [0, 6, 0],
+    [6, 6, 0]
+  ],
+  [
+    // L piece
+    [0, 7, 0],
+    [0, 7, 0],
+    [0, 7, 7]
+  ]
 ];
+
+// returns a random matrix
+function getTetro() {
+  let randNum = Math.floor(Math.random() * 7);
+  return tetro[randNum];
+}
 
 let activePiece = {
   position: { x: 4, y: 7 },
-  matrix: piece
+  matrix: getTetro()
 };
 
 // remove on deploy
@@ -161,7 +198,6 @@ function gameLoop() {
   }, 60);
   if (gameOver) {
     clearInterval(theGame);
-    boardOver(board);
   }
 }
 
@@ -253,8 +289,8 @@ function clearFullRow() {
 
 function resetPiece() {
   activePiece = {
-    position: { x: 5, y: 0 },
-    matrix: piece
+    position: { x: 4, y: 0 },
+    matrix: getTetro()
   };
 }
 
