@@ -184,7 +184,8 @@ function rotatePiece() {
 
 // row of new matrix <- col of old matrix
 function rotateMatrix() {
-  let m = activePiece.matrix.reverse();
+  let m = activePiece.matrix.slice();
+  m.reverse();
   let newMatrix = [];
   for (let i = 0; i < m.length; i++) {
     newMatrix.push([]);
