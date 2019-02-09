@@ -20,6 +20,7 @@ const COL = 10;
 const SIZE = 20;
 
 let gameOver = false;
+let playerScore = 0;
 
 // create board
 let board = [];
@@ -282,6 +283,7 @@ function lockPiece() {
 }
 
 function clearFullRow() {
+  let rowsCleared = 0;
   for (let r = 19; r > 0; r--) {
     // console.table(board[r]);
     if (!board[r].includes(0)) {
@@ -289,9 +291,25 @@ function clearFullRow() {
       console.log("row #", r);
       board.splice(r, 1);
       board.unshift(new Array(10).fill(0));
+      rowsCleared++;
       r++; // after delete, repeat check of row;
     }
   }
+  switch (rowsCleared) {
+    case 1:
+      playerScore += 40;
+      break;
+    case 2:
+      playerScore += 100;
+      break;
+    case 3:
+      playerScore += 300;
+      break;
+    case 4:
+      playerScore += 1200;
+      break;
+  }
+  console.log(playerScore);
 }
 
 function resetPiece() {
