@@ -69,6 +69,7 @@ const SIZE = 20;
 
 let gameOver = false;
 let playerScore = 0;
+let playerLines = 0;
 let nextTetro;
 
 // create board
@@ -86,11 +87,11 @@ function drawCell(x, y, value) {
   ctx.strokeRect(x * SIZE, y * SIZE, SIZE, SIZE);
 }
 
-// *@param matrix -> any grid, tetrominoes and board
-// *@param position -> object x,y
-// go through each row and column, change cells fill color to value
-
-/** */
+/**
+ * @param {number[][]} matrix any grid, tetrominoes and board
+ * @param {{x,y}} position  x-> column, y-> row
+ * go through each row and column, change cells fill color to value
+ */
 function drawMatrix(matrix, position) {
   matrix.forEach((row, y) => {
     row.forEach((value, x) => {
@@ -124,7 +125,13 @@ function drawCellNext(x, y, value) {
 function drawNext(matrix) {
   matrix.forEach((row, r) => {
     row.forEach((value, c) => {
-      drawCellNext(c, r, value);
+      if (matrix.length === 3) {
+        drawCellNext(c, r + 1, value);
+      } else if (matrix.length === 2) {
+        drawCellNext(c + 1, r + 1, value);
+      } else {
+        drawCellNext(c, r, value);
+      }
     });
   });
 }
@@ -345,7 +352,9 @@ function clearFullRow() {
       playerScore += 1200;
       break;
   }
+  playerLines += rowsCleared;
   console.log(playerScore);
+  console.log(playerLines);
 }
 
 function resetPiece() {
