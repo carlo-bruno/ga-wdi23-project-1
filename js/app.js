@@ -5,13 +5,13 @@ const ctx = game.getContext("2d");
 
 const colors = [
   "#bbb",
-  "cyan",
-  "yellow",
-  "purple",
-  "green",
-  "red",
-  "blue",
-  "orange",
+  "cyan", // 1
+  "yellow", // 2
+  "purple", // 3
+  "green", // 4
+  "red", // 5
+  "blue", // 6
+  "orange", // 7
   "#444"
 ];
 
@@ -39,6 +39,8 @@ function drawCell(x, y, value) {
 // *@param matrix -> any grid, tetrominoes and board
 // *@param position -> object x,y
 // go through each row and column, change cells fill color to value
+
+/** */
 function drawMatrix(matrix, position) {
   matrix.forEach((row, y) => {
     row.forEach((value, x) => {
@@ -56,10 +58,10 @@ function drawMatrix(matrix, position) {
 const tetro = [
   [
     // I piece
-    [0, 1, 0, 0],
-    [0, 1, 0, 0],
-    [0, 1, 0, 0],
-    [0, 1, 0, 0]
+    [0, 0, 0, 0],
+    [1, 1, 1, 1],
+    [0, 0, 0, 0],
+    [0, 0, 0, 0]
   ],
   [
     // O piece
@@ -68,9 +70,9 @@ const tetro = [
   ],
   [
     // T piece
-    [0, 0, 0],
+    [0, 3, 0],
     [3, 3, 3],
-    [0, 3, 0]
+    [0, 0, 0]
   ],
   [
     // S piece
@@ -86,26 +88,29 @@ const tetro = [
   ],
   [
     // J piece
-    [0, 6, 0],
-    [0, 6, 0],
-    [6, 6, 0]
+    [6, 0, 0],
+    [6, 6, 6],
+    [0, 0, 0]
   ],
   [
     // L piece
-    [0, 7, 0],
-    [0, 7, 0],
-    [0, 7, 7]
+    [0, 0, 7],
+    [7, 7, 7],
+    [0, 0, 0]
   ]
 ];
 
 // returns a random matrix
 function getTetro() {
-  let randNum = Math.floor(Math.random() * 7);
+  let randNum = Math.floor(Math.random() * tetro.length);
   return tetro[randNum];
 }
 
 let activePiece = {
-  position: { x: 4, y: 7 },
+  position: {
+    x: 3,
+    y: 0
+  },
   matrix: getTetro()
 };
 
@@ -117,19 +122,21 @@ function movePiece(e) {
   // console.log(e.keyCode);
   // if left && position.x < 0, x--
   // else if right && pos.x > 9,x++
-  switch (true) {
-    case e.keyCode === 37:
-      moveLeft();
-      break;
-    case e.keyCode === 39:
-      moveRight();
-      break;
-    case e.keyCode === 40:
-      moveDown();
-      break;
-    case e.keyCode === 38:
-      rotatePiece();
-      break;
+  if (!gameOver) {
+    switch (true) {
+      case e.keyCode === 37:
+        moveLeft();
+        break;
+      case e.keyCode === 39:
+        moveRight();
+        break;
+      case e.keyCode === 40:
+        moveDown();
+        break;
+      case e.keyCode === 38:
+        rotatePiece();
+        break;
+    }
   }
 }
 
@@ -274,7 +281,6 @@ function lockPiece() {
 }
 
 function clearFullRow() {
-  let rowsToDelete = [];
   for (let r = 19; r > 0; r--) {
     // console.table(board[r]);
     if (!board[r].includes(0)) {
@@ -288,11 +294,12 @@ function clearFullRow() {
 }
 
 function resetPiece() {
-  activePiece = {
-    position: { x: 4, y: 0 },
-    matrix: getTetro()
-  };
+  activePiece.matrix = getTetro();
+  activePiece.position.y = 0;
+  activePiece.position.x =
+    COL / 2 - Math.round(activePiece.matrix[0].length / 2);
 }
 
 document.addEventListener("keydown", movePiece);
-let theGame = setInterval(gameLoop, 1000);
+let theGame;
+theGame = setInterval(gameLoop, 1000);
