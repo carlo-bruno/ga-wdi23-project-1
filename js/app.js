@@ -3,6 +3,9 @@ console.log("app.js connected");
 const game = document.querySelector("#game");
 const ctx = game.getContext("2d");
 
+const next = document.querySelector("#next");
+const ctxN = next.getContext("2d");
+
 const colors = [
   "#bbb",
   "cyan", // 1
@@ -14,47 +17,6 @@ const colors = [
   "orange", // 7
   "#444"
 ];
-
-const ROW = 20;
-const COL = 10;
-const SIZE = 20;
-
-let gameOver = false;
-let playerScore = 0;
-
-// create board
-let board = [];
-for (let r = 0; r < ROW; r++) {
-  board.push(new Array(COL).fill(0));
-}
-
-// draw indivitual cell
-function drawCell(x, y, value) {
-  ctx.fillStyle = colors[value];
-  ctx.fillRect(x * SIZE, y * SIZE, SIZE, SIZE);
-
-  ctx.strokeStyle = "#ddd";
-  ctx.strokeRect(x * SIZE, y * SIZE, SIZE, SIZE);
-}
-
-// *@param matrix -> any grid, tetrominoes and board
-// *@param position -> object x,y
-// go through each row and column, change cells fill color to value
-
-/** */
-function drawMatrix(matrix, position) {
-  matrix.forEach((row, y) => {
-    row.forEach((value, x) => {
-      if (matrix === board && !gameOver) {
-        drawCell(x + position.x, y + position.y, value);
-      } else if (value !== 0 && !gameOver) {
-        drawCell(x + position.x, y + position.y, value);
-      } else if (gameOver && value !== 0) {
-        drawCell(x + position.x, y + position.y, colors.length - 1);
-      }
-    });
-  });
-}
 
 const tetro = [
   [
@@ -101,6 +63,72 @@ const tetro = [
   ]
 ];
 
+const ROW = 20;
+const COL = 10;
+const SIZE = 20;
+
+let gameOver = false;
+let playerScore = 0;
+let nextTetro;
+
+// create board
+let board = [];
+for (let r = 0; r < ROW; r++) {
+  board.push(new Array(COL).fill(0));
+}
+
+// draw indivitual cell
+function drawCell(x, y, value) {
+  ctx.fillStyle = colors[value];
+  ctx.fillRect(x * SIZE, y * SIZE, SIZE, SIZE);
+
+  ctx.strokeStyle = "#ddd";
+  ctx.strokeRect(x * SIZE, y * SIZE, SIZE, SIZE);
+}
+
+// *@param matrix -> any grid, tetrominoes and board
+// *@param position -> object x,y
+// go through each row and column, change cells fill color to value
+
+/** */
+function drawMatrix(matrix, position) {
+  matrix.forEach((row, y) => {
+    row.forEach((value, x) => {
+      if (matrix === board && !gameOver) {
+        drawCell(x + position.x, y + position.y, value);
+      } else if (value !== 0 && !gameOver) {
+        drawCell(x + position.x, y + position.y, value);
+      } else if (gameOver && value !== 0) {
+        drawCell(x + position.x, y + position.y, colors.length - 1);
+      }
+    });
+  });
+}
+
+// next block
+const empty = [
+  [0, 0, 0, 0],
+  [0, 0, 0, 0],
+  [0, 0, 0, 0],
+  [0, 0, 0, 0]
+];
+
+function drawCellNext(x, y, value) {
+  ctxN.fillStyle = colors[value];
+  ctxN.fillRect(x * SIZE, y * SIZE, SIZE, SIZE);
+
+  ctxN.strokeStyle = "#ddd";
+  ctxN.strokeRect(x * SIZE, y * SIZE, SIZE, SIZE);
+}
+
+function drawNext(matrix) {
+  matrix.forEach((row, r) => {
+    row.forEach((value, c) => {
+      drawCellNext(c, r, value);
+    });
+  });
+}
+
 // returns a random matrix
 function getTetro() {
   let randNum = Math.floor(Math.random() * tetro.length);
@@ -118,6 +146,11 @@ let activePiece = {
 // remove on deploy
 drawMatrix(board, { x: 0, y: 0 });
 drawMatrix(activePiece.matrix, activePiece.position);
+
+nextTetro = getTetro();
+// console.log(nextTetro);
+drawNext(empty);
+drawNext(nextTetro);
 
 function movePiece(e) {
   // console.log(e.keyCode);
@@ -199,11 +232,14 @@ function rotateMatrix() {
   return newMatrix;
 }
 
+//! Game Loop
 function gameLoop() {
   moveDown();
   setInterval(() => {
     drawMatrix(board, { x: 0, y: 0 });
     drawMatrix(activePiece.matrix, activePiece.position);
+    drawNext(empty);
+    drawNext(nextTetro);
   }, 60);
   if (gameOver) {
     clearInterval(theGame);
@@ -233,12 +269,12 @@ function collideCheck() {
         let newX = c + p.x; // x (board col) to check
 
         if (newX < 0 || newX > 9 || newY > 19) {
-          console.log("wall found");
+          // console.log("wall found");
           return true;
         }
 
         if (board[newY][newX] !== 0) {
-          console.log("collision found");
+          // console.log("collision found");
           return true;
         }
       }
@@ -287,8 +323,8 @@ function clearFullRow() {
   for (let r = 19; r > 0; r--) {
     // console.table(board[r]);
     if (!board[r].includes(0)) {
-      console.log("full!!");
-      console.log("row #", r);
+      // console.log("full!!");
+      // console.log("row #", r);
       board.splice(r, 1);
       board.unshift(new Array(10).fill(0));
       rowsCleared++;
@@ -313,10 +349,11 @@ function clearFullRow() {
 }
 
 function resetPiece() {
-  activePiece.matrix = getTetro();
+  activePiece.matrix = nextTetro;
   activePiece.position.y = 0;
   activePiece.position.x =
     COL / 2 - Math.round(activePiece.matrix[0].length / 2);
+  nextTetro = getTetro();
 }
 
 document.addEventListener("keydown", movePiece);
