@@ -153,6 +153,7 @@ function initGame() {
   gameOver = false;
   playerScore = 0;
   playerLines = 0;
+  updateScreen();
 
   board.length = 0;
   createBoard();
@@ -356,8 +357,9 @@ function clearFullRow() {
       break;
   }
   playerLines += rowsCleared;
-  console.log(playerScore);
-  console.log(playerLines);
+  // console.log(playerScore);
+  // console.log(playerLines);
+  updateScreen();
 }
 
 function resetPiece() {
@@ -366,6 +368,15 @@ function resetPiece() {
   activePiece.position.x =
     COL / 2 - Math.round(activePiece.matrix[0].length / 2);
   nextTetro = getTetro();
+}
+
+//! Update function
+// updateScreen
+const scoreSpan = document.getElementById("score-span");
+const linesSpan = document.getElementById("lines-span");
+function updateScreen() {
+  scoreSpan.textContent = `${playerScore}`;
+  linesSpan.textContent = `${playerLines}`;
 }
 
 document.addEventListener("DOMContentLoaded", () => {
