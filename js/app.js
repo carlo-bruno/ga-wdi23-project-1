@@ -257,17 +257,6 @@ function rotateMatrix() {
 }
 
 //! Game Loop
-// function gameLoop() {
-//   moveDown();
-//   setInterval(() => {
-//     drawMatrix(board, { x: 0, y: 0 });
-//     drawMatrix(activePiece.matrix, activePiece.position);
-//   }, 60);
-//   if (gameOver) {
-//     clearInterval(theGame);
-//   }
-// }
-
 function gameLoop() {
   let now = Date.now();
   let delta = now - loopStart;
@@ -282,13 +271,6 @@ function gameLoop() {
   if (!gameOver && !isPaused) {
     requestAnimationFrame(gameLoop);
   }
-}
-
-// pauseGame
-function pauseGame() {
-  isPaused = !isPaused;
-  gameLoop();
-  // change icon class
 }
 
 //! collision detection
@@ -410,6 +392,15 @@ function updateScreen() {
 
 const restartBtn = document.getElementById("restart-button");
 const pauseBtn = document.getElementById("pause-button");
+
+// pauseGame
+function pauseGame() {
+  isPaused = !isPaused;
+  gameLoop();
+  let icon = pauseBtn.getElementsByTagName("i")[0];
+  icon.classList.toggle("fa-pause");
+  icon.classList.toggle("fa-play");
+}
 
 document.addEventListener("DOMContentLoaded", () => {
   document.addEventListener("keydown", movePiece);
