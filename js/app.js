@@ -68,11 +68,15 @@ const COL = 10;
 const SIZE = 20;
 
 let gameOver = false;
+let isPaused = false;
 let playerScore = 0;
 let playerLines = 0;
+let playerLevel = 1;
+let speed = 1000;
+
 let nextTetro;
 let activePiece;
-let theGame;
+let loopStart;
 
 // create board
 let board = [];
@@ -83,7 +87,6 @@ function createBoard() {
 }
 
 //! Draw Functions
-
 // draw indivitual cell
 function drawCell(x, y, value) {
   ctx.fillStyle = colors[value];
@@ -151,14 +154,13 @@ function getTetro() {
 //! initGame
 function initGame() {
   gameOver = false;
+  isPaused = false;
   playerScore = 0;
   playerLines = 0;
   updateScreen();
 
   board.length = 0;
   createBoard();
-
-  clearInterval(theGame);
 
   activePiece = {
     position: {
@@ -173,12 +175,14 @@ function initGame() {
   drawMatrix(activePiece.matrix, activePiece.position);
   drawNext(empty);
   drawNext(nextTetro);
-  theGame = setInterval(gameLoop, 1000);
+
+  loopStart = Date.now();
+  gameLoop();
 }
 
 //! Move functions
 function movePiece(e) {
-  if (!gameOver) {
+  if (!gameOver && !isPaused) {
     switch (true) {
       case e.keyCode === 37:
         moveLeft();
@@ -253,17 +257,38 @@ function rotateMatrix() {
 }
 
 //! Game Loop
+// function gameLoop() {
+//   moveDown();
+//   setInterval(() => {
+//     drawMatrix(board, { x: 0, y: 0 });
+//     drawMatrix(activePiece.matrix, activePiece.position);
+//   }, 60);
+//   if (gameOver) {
+//     clearInterval(theGame);
+//   }
+// }
+
 function gameLoop() {
-  moveDown();
-  setInterval(() => {
-    drawMatrix(board, { x: 0, y: 0 });
-    drawMatrix(activePiece.matrix, activePiece.position);
-    drawNext(empty);
-    drawNext(nextTetro);
-  }, 60);
-  if (gameOver) {
-    clearInterval(theGame);
+  let now = Date.now();
+  let delta = now - loopStart;
+  if (delta > speed) {
+    moveDown();
+    loopStart = Date.now();
   }
+
+  drawMatrix(board, { x: 0, y: 0 });
+  drawMatrix(activePiece.matrix, activePiece.position);
+
+  if (!gameOver && !isPaused) {
+    requestAnimationFrame(gameLoop);
+  }
+}
+
+// pauseGame
+function pauseGame() {
+  isPaused = !isPaused;
+  gameLoop();
+  // change icon class
 }
 
 //! collision detection
@@ -368,18 +393,28 @@ function resetPiece() {
   activePiece.position.x =
     COL / 2 - Math.round(activePiece.matrix[0].length / 2);
   nextTetro = getTetro();
+  drawNext(empty);
+  drawNext(nextTetro);
 }
 
 //! Update function
 // updateScreen
 const scoreSpan = document.getElementById("score-span");
 const linesSpan = document.getElementById("lines-span");
+const levelSpan = document.getElementById("level-span");
 function updateScreen() {
   scoreSpan.textContent = `${playerScore}`;
   linesSpan.textContent = `${playerLines}`;
+  levelSpan.textContent = `${playerLevel}`;
 }
+
+const restartBtn = document.getElementById("restart-button");
+const pauseBtn = document.getElementById("pause-button");
 
 document.addEventListener("DOMContentLoaded", () => {
   document.addEventListener("keydown", movePiece);
+  pauseBtn.addEventListener("click", pauseGame);
+  restartBtn.addEventListener("click", initGame);
+
   initGame();
 });
