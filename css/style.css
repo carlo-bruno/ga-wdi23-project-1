@@ -16,52 +16,70 @@ main {
   align-items: flex-start;
 }
 
-main section {
-  padding: 30px;
-}
-
 /* Game Box --------------------------------------- */
 .game-box {
-  background-color: green;
+  /* background-color: green; */
+  height: 450px;
+  padding: 15px 10px;
+  width: 55%;
+  text-align: center;
+}
+
+.game-box #game {
+  height: 100%;
+  padding: 0.3em;
+  border: 0.2em solid white;
+  border-radius: 5px;
 }
 
 /* Panel Box -------------------------------------- */
 .panel-box {
-  background-color: blue;
+  /* background-color: blue; */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 450px;
+  padding: 15px 0;
 }
 
 .next-box {
-  border: 1px solid black;
-  background-color: #bbb;
-  border-radius: 10px;
-  padding: 10px 5px;
+  border: 0.2em solid white;
+  background-color: #777;
+  border-radius: 5px;
+  padding: 0.3em;
   text-align: center;
-  width: 100px;
-  height: 90px;
+  width: 95px;
+  height: 95px;
 }
 
-.next-box canvas {
-  width: 70px;
+.next-box #next {
+  width: 80px;
 }
 
 .score-box,
 .line-box {
   border: 1px solid black;
-  /* width: 150px;
-  height: 100px; */
+  width: 170px;
+  height: 100px;
 
   background-color: black;
   color: white;
 
   font-size: 1.2em;
   margin: 10px 0 5px;
+  padding: 5px;
+}
+
+.score-box p,
+.line-box p {
+  text-align: right;
 }
 
 /* Button Box ------------------------------------- */
 .button-box {
   background-color: #bbb;
   display: flex;
-  margin: 20px 0;
+  margin-top: auto;
 }
 
 .button-box div {
@@ -69,4 +87,5 @@ main section {
   height: 40px;
   border: 2px solid black;
   border-radius: 50%;
+  margin: 0 5px;
 }

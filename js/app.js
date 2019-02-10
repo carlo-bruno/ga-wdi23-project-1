@@ -367,4 +367,4 @@ function resetPiece() {
 
 document.addEventListener("keydown", movePiece);
 let theGame;
-theGame = setInterval(gameLoop, 1000);
+// theGame = setInterval(gameLoop, 1000);
