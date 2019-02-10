@@ -71,12 +71,18 @@ let gameOver = false;
 let playerScore = 0;
 let playerLines = 0;
 let nextTetro;
+let activePiece;
+let theGame;
 
 // create board
 let board = [];
-for (let r = 0; r < ROW; r++) {
-  board.push(new Array(COL).fill(0));
+function createBoard() {
+  for (let r = 0; r < ROW; r++) {
+    board.push(new Array(COL).fill(0));
+  }
 }
+
+//! Draw Functions
 
 // draw indivitual cell
 function drawCell(x, y, value) {
@@ -136,33 +142,41 @@ function drawNext(matrix) {
   });
 }
 
-// returns a random matrix
+// returns a random tetromino matrix
 function getTetro() {
   let randNum = Math.floor(Math.random() * tetro.length);
   return tetro[randNum];
 }
 
-let activePiece = {
-  position: {
-    x: 3,
-    y: 0
-  },
-  matrix: getTetro()
-};
+//! initGame
+function initGame() {
+  gameOver = false;
+  playerScore = 0;
+  playerLines = 0;
 
-// remove on deploy
-drawMatrix(board, { x: 0, y: 0 });
-drawMatrix(activePiece.matrix, activePiece.position);
+  board.length = 0;
+  createBoard();
 
-nextTetro = getTetro();
-// console.log(nextTetro);
-drawNext(empty);
-drawNext(nextTetro);
+  clearInterval(theGame);
 
+  activePiece = {
+    position: {
+      x: 3,
+      y: 0
+    },
+    matrix: getTetro()
+  };
+
+  nextTetro = getTetro();
+  drawMatrix(board, { x: 0, y: 0 });
+  drawMatrix(activePiece.matrix, activePiece.position);
+  drawNext(empty);
+  drawNext(nextTetro);
+  theGame = setInterval(gameLoop, 1000);
+}
+
+//! Move functions
 function movePiece(e) {
-  // console.log(e.keyCode);
-  // if left && position.x < 0, x--
-  // else if right && pos.x > 9,x++
   if (!gameOver) {
     switch (true) {
       case e.keyCode === 37:
@@ -212,11 +226,9 @@ function rotatePiece() {
   while (collideCheck()) {
     activePiece.position.x += kick;
     kick = -(kick % 2 == 0 ? kick - 1 : kick + 1);
-    console.log(kick);
     if (Math.abs(kick) > m[0].length + 1) {
       console.log("cant rotate");
       activePiece.matrix = m;
-      kick = 0;
       activePiece.position.x = pX;
       return;
     }
@@ -291,12 +303,10 @@ function collideCheck() {
 }
 
 //! GAME OVER
-// if piece locks && pos.y < 1
-// if !isOver resetPiece
 function endGame() {
   let p = activePiece.position;
 
-  if (p.y > 1) {
+  if (p.y > 0) {
     resetPiece();
   } else {
     console.log("game over");
@@ -307,12 +317,7 @@ function endGame() {
 // change the board[cell] value to matrix of active cell
 function lockPiece() {
   activePiece.matrix.forEach((row, r) => {
-    // console.log(row);
-    // console.log(r); // iterator for rows;
-    // console.log("col", activePiece.position.x);
-    // console.log("row", activePiece.position.y);
     row.forEach((cell, c) => {
-      // console.log(cell);
       if (cell !== 0) {
         board[r + activePiece.position.y][
           c + activePiece.position.x
@@ -322,13 +327,11 @@ function lockPiece() {
   });
   clearFullRow();
   endGame();
-  //  resetPiece();
 }
 
 function clearFullRow() {
   let rowsCleared = 0;
   for (let r = 19; r > 0; r--) {
-    // console.table(board[r]);
     if (!board[r].includes(0)) {
       // console.log("full!!");
       // console.log("row #", r);
@@ -365,6 +368,7 @@ function resetPiece() {
   nextTetro = getTetro();
 }
 
-document.addEventListener("keydown", movePiece);
-let theGame;
-// theGame = setInterval(gameLoop, 1000);
+document.addEventListener("DOMContentLoaded", () => {
+  document.addEventListener("keydown", movePiece);
+  initGame();
+});
