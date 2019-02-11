@@ -4,6 +4,11 @@
   box-sizing: border-box;
 }
 
+html {
+  width: 100%;
+  height: 100%;
+}
+
 body {
   background-color: #3498db;
   background-image: linear-gradient(
@@ -14,12 +19,15 @@ body {
   background-size: cover;
   background-attachment: fixed;
   /* background-repeat: no-repeat; */
+  width: 100%;
+  overflow: hidden;
 }
 
 main {
   border: 0.2em solid black;
   border-radius: 10px;
-  width: 500px;
+  width: 100%;
+  max-width: 600px;
   margin: 2em auto;
   background-color: #2e3131;
 
@@ -31,7 +39,7 @@ main {
 /* Game Box --------------------------------------- */
 .game-box {
   /* background-color: green; */
-  height: 450px;
+  height: 100%;
   padding: 15px 10px;
   width: 55%;
   text-align: center;
@@ -47,6 +55,7 @@ main {
 /* Panel Box -------------------------------------- */
 .panel-box {
   /* background-color: blue; */
+  width: 45%;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -60,29 +69,31 @@ main {
   border-radius: 5px;
   padding: 0.3em;
   text-align: center;
-  width: 95px;
-  height: 95px;
+  width: 90px;
+  height: 90px;
 }
 
 .next-box #next {
-  width: 80px;
+  width: 75px;
 }
 
+/* Scores ----------------------------------------- */
 .score-box,
 .line-box {
   border: 1px solid black;
-  width: 190px;
+  width: 90%;
+  max-width: 190px;
   height: 100px;
-  margin: 10px 0 5px;
+  margin: 5px 0 5px;
   padding: 5px;
 
   background-color: rgba(0, 0, 0, 0.7);
   color: white;
 
   font-family: "Press Start 2P", cursive;
-  font-size: 0.8em;
+  font-size: 0.7rem;
   letter-spacing: 0.8px;
-  line-height: 1.7em;
+  line-height: 1.4rem;
   text-transform: uppercase;
 }
 
@@ -95,10 +106,11 @@ main {
 
 /* Button Box ------------------------------------- */
 .button-box {
-  /* background-color: #bbb; */
-  display: flex;
-  margin-top: auto;
-  padding-right: 10px;
+  width: 90%;
+  height: 27%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
 }
 
 .button-box div {
@@ -106,11 +118,12 @@ main {
   height: 50px;
   border: 0.18em solid black;
   border-radius: 10px;
-  margin: 0 5px;
+  margin-bottom: 8px;
 
   cursor: pointer;
   background-color: #ff6347;
   box-shadow: 0 6px #999;
+  justify-self: center;
 }
 
 .button-box div:active {
@@ -147,13 +160,10 @@ main {
   margin-left: 10px;
 }
 
-/* "left-button"
-"right-button"
-"down-button"
-"rotate-button" */
 /* Mobile Control --------------------------------- */
 .mobile-control {
-  width: 500px;
+  width: 100%;
+  max-width: 600px;
   margin: 0 auto;
 
   display: flex;
@@ -183,6 +193,7 @@ main {
   line-height: 43px;
 }
 
+/* Media Queries ---------------------------------- */
 @media screen and (min-width: 769px) {
   main {
     width: 600px;
@@ -192,6 +203,33 @@ main {
   .game-box {
     padding: 0;
   }
+
+  .next-box {
+    width: 95px;
+    height: 95px;
+  }
+  .next-box #next {
+    width: 80px;
+  }
+
+  .score-box,
+  .line-box {
+    margin-top: 10px;
+    font-size: 0.8em;
+    line-height: 1.7em;
+  }
+
+  .button-box {
+    margin-top: auto;
+    display: flex;
+    height: 50px;
+    margin-right: 10px;
+  }
+
+  .button-box div {
+    margin-right: 12px;
+  }
+
   .mobile-control {
     visibility: hidden;
   }

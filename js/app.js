@@ -7,16 +7,18 @@ const next = document.querySelector("#next");
 const ctxN = next.getContext("2d");
 
 const colors = [
-  "#bbb",
-  "cyan", // 1
-  "yellow", // 2
-  "purple", // 3
-  "green", // 4
-  "red", // 5
-  "blue", // 6
-  "orange", // 7
-  "#444"
+  "#aaaaaa",
+  "#00ffff", // 1
+  "#ffff00", // 2
+  "#800080", // 3
+  "#008000", // 4
+  "#ff0000", // 5
+  "#0000ff", // 6
+  "#ffa500", // 7
+  "#2e3131"
 ];
+
+const stroke = "#ccc";
 
 const tetro = [
   [
@@ -92,7 +94,7 @@ function drawCell(x, y, value) {
   ctx.fillStyle = colors[value];
   ctx.fillRect(x * SIZE, y * SIZE, SIZE, SIZE);
 
-  ctx.strokeStyle = "#ddd";
+  ctx.strokeStyle = stroke;
   ctx.strokeRect(x * SIZE, y * SIZE, SIZE, SIZE);
 }
 
@@ -127,7 +129,7 @@ function drawCellNext(x, y, value) {
   ctxN.fillStyle = colors[value];
   ctxN.fillRect(x * SIZE, y * SIZE, SIZE, SIZE);
 
-  ctxN.strokeStyle = "#ddd";
+  ctxN.strokeStyle = stroke;
   ctxN.strokeRect(x * SIZE, y * SIZE, SIZE, SIZE);
 }
 
