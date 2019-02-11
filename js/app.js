@@ -343,30 +343,15 @@ function levelUp() {
       speed = 6;
       break;
     case 10:
-    case 11:
-    case 12:
       speed = 5;
       break;
     case 13:
-    case 14:
-    case 15:
       speed = 4;
       break;
     case 16:
-    case 17:
-    case 18:
       speed = 3;
       break;
     case 19:
-    case 20:
-    case 21:
-    case 22:
-    case 23:
-    case 24:
-    case 25:
-    case 26:
-    case 27:
-    case 28:
       speed = 2;
       break;
     case 29:
@@ -429,6 +414,7 @@ function clearFullRow() {
   playerLines += rowsCleared;
   levelUp();
   updateScreen();
+  // Play Tetris sound.
 }
 
 function resetPiece() {
@@ -465,10 +451,39 @@ function pauseGame() {
   pauseIcon.classList.toggle("fa-play");
 }
 
+//! Audio Function
+const musicBtn = document.getElementById("music-button");
+const musicIcon = musicBtn.getElementsByTagName("i")[0];
+
+let myAudio;
+function playAudio() {
+  myAudio.play();
+  musicIcon.classList.add("fa-volume-off");
+  musicIcon.classList.remove("fa-volume-up");
+  mute = false;
+}
+function pauseAudio() {
+  myAudio.pause();
+  musicIcon.classList.add("fa-volume-up");
+  musicIcon.classList.remove("fa-volume-off");
+  mute = true;
+}
+let mute = true;
+function toggleMusic() {
+  if (mute) {
+    playAudio();
+  } else {
+    pauseAudio();
+  }
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   document.addEventListener("keydown", movePiece);
   pauseBtn.addEventListener("click", pauseGame);
+  musicBtn.addEventListener("click", toggleMusic);
   restartBtn.addEventListener("click", initGame);
+  myAudio = new Audio("./media/tetris-gameboy.wav");
+  myAudio.loop = true;
 
   initGame();
 });

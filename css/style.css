@@ -98,6 +98,7 @@ main {
   /* background-color: #bbb; */
   display: flex;
   margin-top: auto;
+  padding-right: 10px;
 }
 
 .button-box div {
