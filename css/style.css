@@ -104,6 +104,16 @@ main {
   letter-spacing: 0.8px;
 }
 
+.blinking {
+  animation: blinking 0.9s linear infinite;
+}
+
+@keyframes blinking {
+  90% {
+    color: rgba(0, 0, 0, 0.7);
+  }
+}
+
 /* Button Box ------------------------------------- */
 .button-box {
   width: 90%;

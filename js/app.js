@@ -75,6 +75,7 @@ let playerScore = 0;
 let playerLines = 0;
 let playerLevel = 0;
 let speed = 48;
+let highScore = 0;
 
 let nextTetro;
 let activePiece;
@@ -183,6 +184,10 @@ function initGame() {
 
   pauseIcon.classList.add("fa-pause");
   pauseIcon.classList.remove("fa-play");
+
+  getHighScore();
+  highScoreSpan.classList.remove("blinking");
+  scoreSpan.classList.remove("blinking");
 
   loopStart = Date.now();
   gameLoop();
@@ -370,6 +375,7 @@ function endGame() {
     resetPiece();
   } else {
     console.log("game over");
+    setHighScore();
     gameOver = true;
   }
 }
@@ -431,10 +437,13 @@ function resetPiece() {
 
 //! Update function
 // updateScreen
+const highScoreSpan = document.getElementById("high-score-span");
 const scoreSpan = document.getElementById("score-span");
 const linesSpan = document.getElementById("lines-span");
 const levelSpan = document.getElementById("level-span");
+
 function updateScreen() {
+  highScoreSpan.textContent = `${highScore}`;
   scoreSpan.textContent = `${playerScore}`;
   linesSpan.textContent = `${playerLines}`;
   levelSpan.textContent = `${playerLevel}`;
@@ -484,6 +493,26 @@ const leftBtn = document.getElementById("left-button");
 const rightBtn = document.getElementById("right-button");
 const downBtn = document.getElementById("down-button");
 const rotateBtn = document.getElementById("rotate-button");
+
+//! Local Storage
+function getHighScore() {
+  if (!localStorage.getItem("tetris-high-score")) {
+    localStorage.setItem("tetris-high-score", `${highScore}`);
+  } else {
+    highScore = parseInt(localStorage.getItem("tetris-high-score"));
+    updateScreen();
+  }
+}
+
+function setHighScore() {
+  if (playerScore > highScore) {
+    console.log("new high score");
+    localStorage.setItem("tetris-high-score", `${playerScore}`);
+    highScoreSpan.textContent = `${playerScore}`;
+    highScoreSpan.classList.add("blinking");
+    scoreSpan.classList.add("blinking");
+  }
+}
 
 document.addEventListener("DOMContentLoaded", () => {
   document.addEventListener("keydown", movePiece);
