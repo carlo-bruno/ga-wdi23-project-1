@@ -71,8 +71,8 @@ let gameOver = false;
 let isPaused = false;
 let playerScore = 0;
 let playerLines = 0;
-let playerLevel = 1;
-let speed = 1000;
+let playerLevel = 0;
+let speed = 48;
 
 let nextTetro;
 let activePiece;
@@ -149,6 +149,7 @@ function drawNext(matrix) {
 function getTetro() {
   let randNum = Math.floor(Math.random() * tetro.length);
   return tetro[randNum];
+  // return tetro[1];
 }
 
 //! initGame
@@ -157,6 +158,8 @@ function initGame() {
   isPaused = false;
   playerScore = 0;
   playerLines = 0;
+  playerLevel = 0;
+  speed = 48;
   updateScreen();
 
   board.length = 0;
@@ -175,6 +178,9 @@ function initGame() {
   drawMatrix(activePiece.matrix, activePiece.position);
   drawNext(empty);
   drawNext(nextTetro);
+
+  pauseIcon.classList.add("fa-pause");
+  pauseIcon.classList.remove("fa-play");
 
   loopStart = Date.now();
   gameLoop();
@@ -260,7 +266,7 @@ function rotateMatrix() {
 function gameLoop() {
   let now = Date.now();
   let delta = now - loopStart;
-  if (delta > speed) {
+  if (delta > 1000 / (60 / speed)) {
     moveDown();
     loopStart = Date.now();
   }
@@ -274,21 +280,9 @@ function gameLoop() {
 }
 
 //! collision detection
-//* returns boolean value
-//* checks every cell of active piece
-//* if cell !== 0, continue
-//*   if next cell === walls, true
-//*   if next cell === floor, true
-//*   if next left cell !==0, true
-//*   if next right cell !==, true
-//* false
-
 function collideCheck() {
   let m = activePiece.matrix;
   let p = activePiece.position;
-  // collide now checks actual cell
-  // if collision happens, revert move
-  // this will also allow piece to slide on the floor before locking
   for (let r = 0; r < m.length; r++) {
     for (let c = 0; c < m[r].length; c++) {
       if (m[r][c] !== 0) {
@@ -308,6 +302,77 @@ function collideCheck() {
     }
   }
   return false;
+}
+
+// level up
+
+function levelUp() {
+  if (playerLines >= playerLevel * 10 + 10) {
+    playerLevel++;
+  }
+
+  switch (playerLevel) {
+    case 0:
+      speed = 48;
+      break;
+    case 1:
+      speed = 43;
+      break;
+    case 2:
+      speed = 38;
+      break;
+    case 3:
+      speed = 33;
+      break;
+    case 4:
+      speed = 28;
+      break;
+    case 5:
+      speed = 23;
+      break;
+    case 6:
+      speed = 18;
+      break;
+    case 7:
+      speed = 13;
+      break;
+    case 8:
+      speed = 8;
+      break;
+    case 9:
+      speed = 6;
+      break;
+    case 10:
+    case 11:
+    case 12:
+      speed = 5;
+      break;
+    case 13:
+    case 14:
+    case 15:
+      speed = 4;
+      break;
+    case 16:
+    case 17:
+    case 18:
+      speed = 3;
+      break;
+    case 19:
+    case 20:
+    case 21:
+    case 22:
+    case 23:
+    case 24:
+    case 25:
+    case 26:
+    case 27:
+    case 28:
+      speed = 2;
+      break;
+    case 29:
+      speed = 1;
+      break;
+  }
 }
 
 //! GAME OVER
@@ -341,8 +406,6 @@ function clearFullRow() {
   let rowsCleared = 0;
   for (let r = 19; r > 0; r--) {
     if (!board[r].includes(0)) {
-      // console.log("full!!");
-      // console.log("row #", r);
       board.splice(r, 1);
       board.unshift(new Array(10).fill(0));
       rowsCleared++;
@@ -351,21 +414,20 @@ function clearFullRow() {
   }
   switch (rowsCleared) {
     case 1:
-      playerScore += 40;
+      playerScore += 40 * (playerLevel + 1);
       break;
     case 2:
-      playerScore += 100;
+      playerScore += 100 * (playerLevel + 1);
       break;
     case 3:
-      playerScore += 300;
+      playerScore += 300 * (playerLevel + 1);
       break;
     case 4:
-      playerScore += 1200;
+      playerScore += 1200 * (playerLevel + 1);
       break;
   }
   playerLines += rowsCleared;
-  // console.log(playerScore);
-  // console.log(playerLines);
+  levelUp();
   updateScreen();
 }
 
@@ -392,14 +454,15 @@ function updateScreen() {
 
 const restartBtn = document.getElementById("restart-button");
 const pauseBtn = document.getElementById("pause-button");
+const pauseIcon = pauseBtn.getElementsByTagName("i")[0];
 
 // pauseGame
 function pauseGame() {
   isPaused = !isPaused;
   gameLoop();
-  let icon = pauseBtn.getElementsByTagName("i")[0];
-  icon.classList.toggle("fa-pause");
-  icon.classList.toggle("fa-play");
+
+  pauseIcon.classList.toggle("fa-pause");
+  pauseIcon.classList.toggle("fa-play");
 }
 
 document.addEventListener("DOMContentLoaded", () => {
