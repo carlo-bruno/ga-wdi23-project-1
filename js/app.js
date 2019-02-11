@@ -477,11 +477,23 @@ function toggleMusic() {
   }
 }
 
+//mobile controls
+const leftBtn = document.getElementById("left-button");
+const rightBtn = document.getElementById("right-button");
+const downBtn = document.getElementById("down-button");
+const rotateBtn = document.getElementById("rotate-button");
+
 document.addEventListener("DOMContentLoaded", () => {
   document.addEventListener("keydown", movePiece);
   pauseBtn.addEventListener("click", pauseGame);
   musicBtn.addEventListener("click", toggleMusic);
   restartBtn.addEventListener("click", initGame);
+
+  leftBtn.addEventListener("click", moveLeft);
+  rightBtn.addEventListener("click", moveRight);
+  downBtn.addEventListener("click", moveDown);
+  rotateBtn.addEventListener("click", rotatePiece);
+
   myAudio = new Audio("./media/tetris-gameboy.wav");
   myAudio.loop = true;
 

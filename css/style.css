@@ -5,11 +5,11 @@
 }
 
 body {
-  background-color: #00dbde;
+  background-color: #3498db;
   background-image: linear-gradient(
     131deg,
-    #00dbde 0%,
-    #fc00ff 100%
+    #3498db 0%,
+    #913d88 100%
   );
   background-size: cover;
   background-attachment: fixed;
@@ -17,11 +17,11 @@ body {
 }
 
 main {
-  border: 1px solid black;
-  border-radius: 5px;
+  border: 0.2em solid black;
+  border-radius: 10px;
   width: 500px;
-  margin: 0 auto;
-  background-color: #777;
+  margin: 2em auto;
+  background-color: #2e3131;
 
   display: flex;
   justify-content: center;
@@ -56,7 +56,7 @@ main {
 
 .next-box {
   border: 0.2em solid white;
-  background-color: #777;
+  background-color: #2e3131;
   border-radius: 5px;
   padding: 0.3em;
   text-align: center;
@@ -104,12 +104,12 @@ main {
 .button-box div {
   width: 50px;
   height: 50px;
-  border: 3px solid black;
-  border-radius: 50%;
+  border: 0.18em solid black;
+  border-radius: 10px;
   margin: 0 5px;
 
   cursor: pointer;
-  background-color: tomato;
+  background-color: #ff6347;
   box-shadow: 0 6px #999;
 }
 
@@ -127,7 +127,7 @@ main {
 }
 
 /* Tool Tip --------------------------------------- */
-/* from http://jsfiddle.net/AndreaLigios/jtLbpy62/ */
+/* from http://jsfiddle.net/AndreaLigios/jtLbpy62/  */
 
 [tooltip]:before {
   content: attr(tooltip);
@@ -145,4 +145,54 @@ main {
   background: #38a1f3;
   margin-top: -20px;
   margin-left: 10px;
+}
+
+/* "left-button"
+"right-button"
+"down-button"
+"rotate-button" */
+/* Mobile Control --------------------------------- */
+.mobile-control {
+  width: 500px;
+  margin: 0 auto;
+
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.mobile-control div {
+  border: 0.2em solid black;
+  border-radius: 10px;
+  width: 23%;
+  height: 50px;
+  text-align: center;
+
+  background-color: goldenrod;
+  box-shadow: 0 6px #999;
+}
+
+.mobile-control div:active {
+  box-shadow: 0 3px #999;
+  transform: translateY(3px);
+}
+
+.mobile-control i {
+  font-size: 1.8rem;
+  text-align: center;
+  line-height: 43px;
+}
+
+@media screen and (min-width: 769px) {
+  main {
+    width: 600px;
+    height: 500px;
+    padding: 20px;
+  }
+  .game-box {
+    padding: 0;
+  }
+  .mobile-control {
+    visibility: hidden;
+  }
 }
