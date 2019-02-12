@@ -66,14 +66,15 @@ Technical Requirements:
 4. The game is over when your piece locks at the top of the board.
 5. High Scores are stored in your browser's Local Storage.
 
-<img src="./screen-shots/ss-tetris-1024.png" width="500" >
 Desktop implementation
+<img src="./screen-shots/ss-tetris-1024.png" width="400" >
 
-<img src="./screen-shots/ss-tetris-768.png" width="400" >
 Tablet-size
+<img src="./screen-shots/ss-tetris-768.png" width="350" >
 
-<img src="./screen-shots/ss-tetris-425s.png" width="300" >
 Mobile
+<img src="./screen-shots/ss-tetris-425s.png" width="300" >
+
 
 ## Building the App
 
