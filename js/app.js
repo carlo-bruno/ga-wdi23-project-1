@@ -182,6 +182,8 @@ function initGame() {
   drawNext(empty);
   drawNext(nextTetro);
 
+  message.classList.add("hidden");
+
   pauseIcon.classList.add("fa-pause");
   pauseIcon.classList.remove("fa-play");
 
@@ -312,7 +314,6 @@ function collideCheck() {
 }
 
 // level up
-
 function levelUp() {
   if (playerLines >= playerLevel * 10 + 10) {
     playerLevel++;
@@ -368,6 +369,8 @@ function levelUp() {
 }
 
 //! GAME OVER
+const message = document.getElementById("message");
+
 function endGame() {
   let p = activePiece.position;
 
@@ -375,6 +378,8 @@ function endGame() {
     resetPiece();
   } else {
     console.log("game over");
+    message.textContent = "GAME OVER";
+    message.classList.remove("hidden");
     setHighScore();
     gameOver = true;
   }
@@ -455,11 +460,15 @@ const pauseIcon = pauseBtn.getElementsByTagName("i")[0];
 
 // pauseGame
 function pauseGame() {
-  isPaused = !isPaused;
-  gameLoop();
+  if (!gameOver) {
+    isPaused = !isPaused;
+    gameLoop();
 
-  pauseIcon.classList.toggle("fa-pause");
-  pauseIcon.classList.toggle("fa-play");
+    message.textContent = "PAUSED";
+    message.classList.toggle("hidden");
+    pauseIcon.classList.toggle("fa-pause");
+    pauseIcon.classList.toggle("fa-play");
+  }
 }
 
 //! Audio Function
@@ -520,10 +529,18 @@ document.addEventListener("DOMContentLoaded", () => {
   musicBtn.addEventListener("click", toggleMusic);
   restartBtn.addEventListener("click", initGame);
 
-  leftBtn.addEventListener("click", moveLeft);
-  rightBtn.addEventListener("click", moveRight);
-  downBtn.addEventListener("click", moveDown);
-  rotateBtn.addEventListener("click", rotatePiece);
+  leftBtn.addEventListener("click", () => {
+    if (!isPaused) moveLeft();
+  });
+  rightBtn.addEventListener("click", () => {
+    if (!isPaused) moveRight();
+  });
+  downBtn.addEventListener("click", () => {
+    if (!isPaused) moveDown();
+  });
+  rotateBtn.addEventListener("click", () => {
+    if (!isPaused) rotatePiece();
+  });
 
   myAudio = new Audio("./media/tetris-gameboy.wav");
   myAudio.loop = true;

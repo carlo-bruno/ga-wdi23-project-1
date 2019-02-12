@@ -28,7 +28,7 @@ main {
   border-radius: 10px;
   width: 100%;
   max-width: 600px;
-  margin: 2em auto;
+  margin: 2em auto 1em;
   background-color: #2e3131;
 
   display: flex;
@@ -43,6 +43,7 @@ main {
   padding: 15px 10px;
   width: 55%;
   text-align: center;
+  position: relative;
 }
 
 .game-box #game {
@@ -50,6 +51,27 @@ main {
   padding: 0.3em;
   border: 0.2em solid white;
   border-radius: 5px;
+}
+
+#message {
+  border: 0.2rem solid black;
+  border-radius: 5px;
+  width: 170px;
+  height: 40px;
+
+  position: absolute;
+  top: 33.5%;
+  left: 14.25%;
+
+  font-family: "Press Start 2P", cursive;
+  background-color: #2e3131;
+  color: white;
+  font-size: 1rem;
+  line-height: 35px;
+}
+
+.hidden {
+  display: none;
 }
 
 /* Panel Box -------------------------------------- */
@@ -124,7 +146,7 @@ main {
 }
 
 .button-box div {
-  width: 50px;
+  width: 80px;
   height: 50px;
   border: 0.18em solid black;
   border-radius: 10px;
@@ -134,6 +156,7 @@ main {
   background-color: #ff6347;
   box-shadow: 0 6px #999;
   justify-self: center;
+  text-align: center;
 }
 
 .button-box div:active {
@@ -204,7 +227,7 @@ main {
 }
 
 /* Media Queries ---------------------------------- */
-@media screen and (min-width: 769px) {
+@media screen and (min-width: 768px) {
   main {
     width: 600px;
     height: 500px;
@@ -212,6 +235,17 @@ main {
   }
   .game-box {
     padding: 0;
+  }
+  #message {
+    width: 200px;
+    height: 40px;
+
+    position: absolute;
+    top: 33.5%;
+    left: 17.5%;
+
+    font-size: 1.2rem;
+    line-height: 35px;
   }
 
   .next-box {
@@ -239,7 +273,9 @@ main {
   .button-box div {
     margin-right: 12px;
   }
+}
 
+@media screen and (min-width: 769px) {
   .mobile-control {
     visibility: hidden;
   }
