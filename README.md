@@ -49,7 +49,7 @@ Technical Requirements:
 2. To move the active piece left and right, use :arrow_left: **Arrow Left** and :arrow_right: **Arrow Right**.
 3. To soft drop the piece, use :arrow_down: **Arrow Down**.
 4. To rotate the piece clockwise, use :arrow_up: **Arrow Up**.
-5. On devices less than 768px, 4 buttons will appear to control the piece. they are marked :arrow*left:, :arrow_right:, :arrow_down:, :arrows_clockwise:. \_Note: Mobile gameplay is sub-optimal at the moment.*
+5. On devices less than 768px, 4 buttons will appear to control the piece. they are marked :arrow_left:, :arrow_right:, :arrow_down:, :arrows_clockwise:. *Note: Mobile gameplay is sub-optimal at the moment.*
 6. Buttons on the game panel: Pause/Play Toggle, Restart Game, Music On/Off Toggle, and Info
 
 ### Scores and Levels
@@ -65,6 +65,15 @@ Technical Requirements:
 3. Every level, the pieces drop a little faster.
 4. The game is over when your piece locks at the top of the board.
 5. High Scores are stored in your browser's Local Storage.
+
+<img src="./screen-shots/ss-tetris-1024.gif" width="500" >
+Desktop implementation
+
+<img src="./screen-shots/ss-tetris-768.gif" width="400" >
+Tablet-size
+
+<img src="./screen-shots/ss-tetris-425s.gif" width="300" >
+Mobile
 
 ## Building the App
 
@@ -100,6 +109,11 @@ The idea is to freeze our active piece by copying it's matrix into the board. An
 
 By the end of this, our board will have non-zero values in it, and our draw functions will render them accordingly.
 
+#### New Kid on the Block
+And there's me trying to be clever on my documentation. HAHA.
+
+*'What happens to the piece when it locks? How are you making another piece appear at the top?'* Function `resetPiece()` changes the position of the active piece to the top of the board. It also sets a new matrix from our piece randomizer. The active piece is just being moved and changed the whole game! *"Smokes and mirrors" wink wink*
+
 #### Check Collision
 Although quite simple logically, function `collideCheck()` is probably the trickiest to implement in this game. I did not have it fully functioning until day 4 of project week.
 
@@ -111,8 +125,81 @@ Simple enough, listen for key events, use left arrow key to decrement the column
 Adding a manual drop, I though was as simple as adding to the y, but I found instead was a nest full of bugs. All because of my unpolished check collision.
 
 #### Check Collision, Revisited
-(...to be continued)
+I devised a better collision checker after staring at my code until I fell asleep that night. This function will have to:
 
+1. return a boolean value, this will dictate if our piece can move or not
+2. checks for every occupied cell _of our matrix_ 
+3. using their x and y position, look at the cells around it _on the board_
+4. if the next cell is either a wall or the floor , return `true`
+5. if it sees the next cell on the board is occupied, it returns `true`
+6. if the path is clear, it will return `false`
+
+To be more specific on which side to check, I added parameters (x,y) to this function. These values will then be added to the x and y position of our occupied cells. Setting `x= -1` or `x = 1` checks the left-hand and right-hand side of the cell, respectively. And `y= 1` to check the cell below.
+
+I used this function inside the move functions. Returning a `collision true` will disallow moving the piece in that direction, and in the case of y-axis, letting us know when and where to lock the piece to the board.
+
+#### Tetris! Clearing Rows
+The idea that I had before actually implementing this is to splice the full row, and add an empty one to the top of the board. It worked with single row clears, but clearing multiple rows became problematic. It turns out I was splicing a row and not checking the same row.
+
+```javascript
+  // This is the core of the function
+  for (let r = 19; r > 0; r--) {
+    if (!board[r].includes(0)) {
+      board.splice(r, 1);
+      board.unshift(new Array(10).fill(0));
+      rowsCleared++;
+      r++; // the solution is to check the row again before moving forward
+    }
+  }
+```
+#### Rotating Piece
+The goal here is quite simple: **The column of the old matrix becomes the row of the new matrix**. After a few Google searches and some help from cohort mates, I have a function that, what I thought was rotating my matrix. But further testing shows that it was just flipping the piece in a diagonal axis. (check the medium article linked below)
+
+We found that reversing the new matrix is necessary to actually rotate the piece _counter-clockwise_. And reversing the old matrix before flipping it will rotate it _clockwise_. (note: this created a bug, more on this later)
+
+Rotating the piece works in general. But rotating next to a wall or another piece locks it out of bounds or inside an occupied cell, thus marking another challenge to improve *sigh* check collision.
+
+#### Check Collision, Again?!
+The final implementation of the check collision does not _look at the future_, in other words, it checks the cell's current position _after a move_ and if a collision is found, _kicks_ the piece back. This helped with the rotation of the piece, and simplified the implementation on all our move functions.
+
+But we still have a problem, _"What if the rotation does not make sense?"_ While testing, I found that rotating sometimes _teleports_ the piece. And setting a set kick value locks a longer piece outside of the wall.
+
+To solve this, We have to test different _kick_ values, going left and right `+1, -2, +3 , -4...` until theres no more collision. And if the kick is more than the dimension of our matrix (it doesnt make sense), then we set back the previous matrix in its former position.
+
+```javascript
+  while (collideCheck()) {
+    activePiece.position.x += kick;
+    kick = -(kick % 2 == 0 ? kick - 1 : kick + 1);
+    if (Math.abs(kick) > m[0].length + 1) {
+      // "cant rotate"
+      activePiece.matrix = m;       // previous matrix
+      activePiece.position.x = pX;  // previous position
+      return;
+    }
+```
+#### Adding All Tetrominoes
+Now that I have a solid foundation, I deemed it time to implement all the pieces. I simply added an array of matrices, but to differentiate each piece and their paint, their cells contain different values.
+
+```javascript
+  [ [0,3,0],    [ [0,4,4],    [ [0,7,0],
+    [3,3,3],      [4,4,0],      [0,7,0],
+    [0,0,0] ]     [0,0,0] ]     [0,7,7] ]
+//  T- piece   // S-piece    // L-piece
+```
+Having all the pieces now exposed the bug on `rotateMatrix()`. Colors and values are showing properly, but the shapes are completely wrong.
+
+#### Rotate Piece, Revisited
+It turns out out `array.prototype.reverse()` is destructive. It was mutating the active piece matrix every time I rotate a piece because I set a reference value instead of using a copy.
+```javascript
+// to solve this, I sliced the matrix, returning a copy instead of a reference
+  let m = activePiece.matrix.slice();
+  m.reverse();  // and reversed that
+```
+
+After this fix, I have a working tetris game. Additional functions like scores, levels, background music, preview of the next block were added. I tried to follow the Official Tetris Guideline, and most features are modeled from the Nintendo Entertainment System Tetris game released in 1989.
+
+#### Disclaimer, Credits:
+The matrix implementation idea is not fully mine. In researching for this game, I have exposed myself to numerous implementation of the game. One in particular used Bitmap, which I find interesting, but too advanced for my level. I also looked at programs not written in Javascript, and tried to parse their codes. I found that most of them  1) use HTML canvas and 2) use matrices. I attached some of the links below to acknowledge their ideas.
 
 ### Built with
 
@@ -128,6 +215,7 @@ Adding a manual drop, I though was as simple as adding to the y, but I found ins
 - [Tetris Scoring - Tetris Wiki](https://tetris.wiki/Scoring)
 - Write a Tetris Game in JavaScript by Meth Meth Method [Youtube](https://youtu.be/H2aW5V46khA)
 - Tetris Game using Javascript by Code Explained [Youtube](https://youtu.be/HEsAr2Yt2do)
+- Build Tetris Game with HTML, CSS and Javascript by Coding Dojo [Youtube](https://youtu.be/G7u53KX9i48)
 - Tooltip Display Tutorial [jsFiddle](http://jsfiddle.net/AndreaLigios/jtLbpy62/)
 - Matrix Rotation [Medium](https://medium.com/front-end-weekly/matrix-rotation-%EF%B8%8F-6550397f16ab)
 
